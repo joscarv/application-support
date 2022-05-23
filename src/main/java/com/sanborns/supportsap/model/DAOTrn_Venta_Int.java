@@ -29,6 +29,7 @@ public class DAOTrn_Venta_Int
 			venta = new Trn_Venta_Int((Integer)list.get(0).get("id_tda_vfp"), ((java.math.BigDecimal)list.get(0).get("total_vfp")).doubleValue());
 			sap.close();
 		}
+		sap = null;
 		return venta;
 	}
 }

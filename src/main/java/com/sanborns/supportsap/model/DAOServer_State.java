@@ -15,8 +15,9 @@ public class DAOServer_State
 		{
 			List<Map<String, Object>> list = sap.execute(query);
 			server = new Server_State((Date)list.get(0).get("businessdate"), (String)list.get(0).get("storeopen"));
-			sap.close();
+			sap.close();			
 		}
+		sap = null;
 		return server;
 	}
 }
