@@ -26,7 +26,7 @@ public class FtpClient
 		client = new org.apache.commons.net.ftp.FTPClient();
 	}
 	
-	public List<String> dirSanborns41()
+	public List<String> dirSanborns41(String date)
 	{
 		List<String> list = new ArrayList<>();
 		try 
@@ -37,8 +37,9 @@ public class FtpClient
 				String[] temp = client.listNames();
 				list = Arrays.asList(temp).
 						stream().
-						filter(f -> f.split("\\.").length > 2).
-						map(f -> f.split("\\.")[0] + "." + f.split("\\.")[1] + "." + f.split("\\.")[2]).
+						filter(f -> f.contains(date)).
+						filter(this::isFileInterface).
+						map(this::getNameInterface).
 						collect(Collectors.toList());					
 			} 
 			else
@@ -57,7 +58,7 @@ public class FtpClient
 		return list;
 	}
 	
-	public List<String> dirSanborns41_after()
+	public List<String> dirSanborns41_after(String date)
 	{
 		String userSanborns = "Soporte";
 		String passSanborns = "S0p0rt3";
@@ -70,11 +71,12 @@ public class FtpClient
 				client.changeWorkingDirectory("/Temporales/Temporal_Sanborns");
 				String[] temp = client.listNames();
 				list = Arrays.asList(temp).
-							stream().
-							filter(f -> f.split("\\.").length > 2).
-							map(f -> f.split("\\.")[0] + "." + f.split("\\.")[1] + "." + f.split("\\.")[2]).
-							collect(Collectors.toList());
-			} 
+						stream().
+						filter(f -> f.contains(date)).
+						filter(this::isFileInterface).
+						map(this::getNameInterface).
+						collect(Collectors.toList());
+			}
 			else
 			{
 				list.add("Credenciales incorrectas");
@@ -91,7 +93,7 @@ public class FtpClient
 		return list;
 	}
 	
-	public List<String> dirCafe41()
+	public List<String> dirCafe41(String date)
 	{
 		List<String> list = new ArrayList<>();
 		try 
@@ -102,8 +104,9 @@ public class FtpClient
 				String[] temp = client.listNames();
 				list = Arrays.asList(temp).
 						stream().
-						filter(f -> f.split("\\.").length > 2).
-						map(f -> f.split("\\.")[0] + "." + f.split("\\.")[1] + "." + f.split("\\.")[2]).
+						filter(f -> f.contains(date)).
+						filter(this::isFileInterface).
+						map(this::getNameInterface).
 						collect(Collectors.toList());
 			} 
 			else
@@ -150,5 +153,15 @@ public class FtpClient
 		}
 		return list;
 	}
+
+	private boolean isFileInterface(String file)
+	{
+		return file.split("\\.").length > 2;
+	}
 	
+	private String getNameInterface(String file)
+	{
+		String[] f = file.split("\\.");
+		return f[0] + "." + f[1] + "." + f[2];
+	}
 }
