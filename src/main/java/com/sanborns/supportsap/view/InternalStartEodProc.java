@@ -16,7 +16,7 @@ public class InternalStartEodProc extends InterfaceReview
 	private int porcent;
 	private int length;
 	private int error;
-	private String textError;
+	private StringBuilder textError;
 	private FtpClient ftpClient;
 	
 	public InternalStartEodProc()
@@ -26,7 +26,7 @@ public class InternalStartEodProc extends InterfaceReview
 		setSize(600,500);
 		porcent = 0;
 		error = 0;
-		textError = "";
+		textError = new StringBuilder();
 		ftpClient = new FtpClient();
 	}
 	
@@ -34,7 +34,7 @@ public class InternalStartEodProc extends InterfaceReview
 	public void initButton() 
 	{		
 		buttonPressed = false;
-		appendLine("<- " + Dates.getNow() + " INICIA VALIDACION DE INICIO EODPROC ->");
+		appendLine("<< " + Dates.getNow() + " - INICIA VALIDACION DE INICIO EODPROC >>");
 		appendLine("");
 		
 		List<String> eodprocs = ftpClient.dirEodProc();
@@ -66,30 +66,29 @@ public class InternalStartEodProc extends InterfaceReview
 		}
 		String date = Dates.getToDay();
 		stores.forEach(s -> existStarteod(s, eodprocs, date));
+		if(error > 0)
+		{
+			appendLine("Revisar las siguientes Unidades: \n");
+			appendLine(textError.toString());
+		} else
+		{
+			appendLine("Todas las unidades iniciaron EODPROC");
+		}		
 		appendLine("");
 		appendLine("Unidades revisadas: " + stores.size());
 		appendLine("Unidades correctas: " + (stores.size() - error));
 		appendLine("Unidades con error: " + error);
-		appendLine("");
-		if(error > 0)
-		{
-			appendLine("Revisar las siguientes Unidades: ");
-			appendLine(textError);
-		}
-		endMessage();	
+		endMessage();
 	}
 	
 	private void existStarteod(Ctg_Store store, List<String> eodprocs, String date)
 	{
 		int idStore = store.getIdStore() + 1000;
 		String fileStore = "STARTEOD." + idStore + "." + date + ".FLG";
-		if(eodprocs.contains(fileStore))
-			appendLine("Unidad " + idStore + ": INICIADA CORRECTAMENTE");
-		else
+		if(!eodprocs.contains(fileStore))
 		{
 			error++;
-			textError += "Unidad " + idStore + ": SIN EODPROC INICIADO\n";
-			appendLine("Unidad " + idStore + ": SIN EODPROC INICIADO");
+			textError.append("Unidad " + idStore + ": SIN EODPROC INICIADO\n");			
 		}
 		progressBar.setValue(++porcent*100/length);
 	}
@@ -97,11 +96,11 @@ public class InternalStartEodProc extends InterfaceReview
 	private void endMessage()
 	{
 		appendLine("");
-		appendLine("<- " + Dates.getNow() + " FINALIZA VALIDACION DE INICIO EODPROC ->");
+		appendLine("<< " + Dates.getNow() + " - FINALIZA VALIDACION DE INICIO EODPROC >>");
 		appendLine("");
 		porcent = 0;
 		error = 0;
-		textError = "";
+		textError = new StringBuilder();
 		button.setEnabled(true);
 	}
 }

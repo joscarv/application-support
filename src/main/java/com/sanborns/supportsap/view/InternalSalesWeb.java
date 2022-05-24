@@ -37,7 +37,7 @@ public class InternalSalesWeb extends InterfaceReview
 		buttonPressed = false;
 		porcent = 0;
 		String date = Dates.getYesterday();
-		appendLine(Dates.getNow() + " INICIA VALIDACION DE VENTAS INTERNET");
+		appendLine("<< " + Dates.getNow() + " INICIA VALIDACION DE VENTAS INTERNET >>");
 		appendLine("   Fecha de Operacion: " + date);
 		appendLine("");
 		List<Delivery> deliverys = new DAODelivery().getDelivery(date);
@@ -69,7 +69,7 @@ public class InternalSalesWeb extends InterfaceReview
 			appendLine(textError);
 			appendLine("");
 		}
-		appendLine(Dates.getNow() + " FINALIZA VALIDACION DE VENTAS INTERNET");
+		appendLine("<< " + Dates.getNow() + " FINALIZA VALIDACION DE VENTAS INTERNET >>");
 		button.setEnabled(true);
 	}
 

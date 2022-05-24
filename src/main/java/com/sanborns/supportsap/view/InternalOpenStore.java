@@ -18,38 +18,42 @@ public class InternalOpenStore extends InterfaceReview
 	private int porcent;
 	private int error;
 	private int length;
-	private String textError;
 
 	public InternalOpenStore()
 	{
-		this.setTitle("Unidades abiertas con businessdate dia anterior");
+		this.setTitle("Unidades abiertas");
 		this.button.setText("Buscar unidades abiertas");
 		porcent = 0;
 		error = 0;
 		length = 0;
-		textError = "";
 		setSize(600,500);
 	}
 
 	@Override
-	public void initButton() 
+	public void initButton()
 	{
 		buttonPressed = false;
-		appendLine(Dates.getNow() + " INICIA BUSQUEDA DE UNIDADES ABIERTAS");
+		appendLine("<< " + Dates.getNow() + " INICIA BUSQUEDA DE UNIDADES ABIERTAS >>");
 		appendLine("");
 		
 		List<Ctg_Store> stores = new DAOCtg_Store().getSanborns().stream().filter(f -> f.getIdStore() != 881).collect(Collectors.toList());
 		length = stores.size();
 		if(stores.isEmpty())
 		{
-			JOptionPane.showMessageDialog(this, "Tiendas Internet 24", "No se pudo obtener info de tiendas del servidor 10.128.10.24", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Sin conexion a 10.128.10.24 (Info Tiendas)", "Error Server 24", JOptionPane.ERROR_MESSAGE);
 			button.setEnabled(true);
 			return;
 		}
+
 		stores.forEach(this::statusStore);
+
+		appendLine("");
+		appendLine("Unidades Revisadas: " + stores.size());
+		appendLine("Unidades Cerradas: " + (stores.size() - error));
+		appendLine("Unidades Abiertas: " + error);
 		
 		appendLine("");
-		appendLine(Dates.getNow() + " FINALIZA BUSQUEDA DE UNIDADES ABIERTAS");
+		appendLine("<< " + Dates.getNow() + " FINALIZA BUSQUEDA DE UNIDADES ABIERTAS >>");
 		button.setEnabled(true);
 	}
 	
@@ -60,13 +64,18 @@ public class InternalOpenStore extends InterfaceReview
 		if(server == null)
 		{
 			error++;
-			textError += "Unidad " + idStore + ": Sin conexión";
 			appendLine("Unidad " + idStore + ": Sin conexión");
 			progressBar.setValue(++porcent*100/length);
 			return;
 		}
-			
-		appendLine(server.toString());
+		
+		if(server.getStoreopen().contains("Y"))
+		{
+			appendLine("Unidad " + idStore + ": Abierta con businessdate " + server.getBusinessdateString());
+			error++;
+		}
+		else
+			appendLine("Unidad " + idStore + ": CERRADA");
 		progressBar.setValue(++porcent*100/length);
 	}
 }
