@@ -9,15 +9,15 @@ import java.util.stream.Collectors;
 
 public class FtpClient 
 {
-	private final String server41 = "10.128.10.41";
-	private final String userSanborns = "SanbSAP";
-	private final String passSanborns = "S4nbS4p";
-	private final String userCafe = "SanbCafeSAP";
-	private final String passCafe = "S4nbC4feS4P";
+	private final String server41 = Config.getInstance().getServerFTP41();
+	private final String userSanborns = Config.getInstance().getUserSanb41();
+	private final String passSanborns = Config.getInstance().getPassSanb41();
+	private final String userCafe = Config.getInstance().getUserCafe41();
+	private final String passCafe = Config.getInstance().getPassCafe41();
 	
-	private final String server24 = "10.128.10.24";
-	private final String userEodProc = "psiftp";
-	private final String passEodProc = "Pa$$word1";	
+	private final String server24 = Config.getInstance().getServerFTP24();
+	private final String userEodProc = Config.getInstance().getUserFTP24();
+	private final String passEodProc = Config.getInstance().getPassFTP24();	
 	
 	private org.apache.commons.net.ftp.FTPClient client;
 	
@@ -34,13 +34,8 @@ public class FtpClient
 			client.connect(server41);
 			if(client.login(userSanborns, passSanborns))
 			{				
-				String[] temp = client.listNames();
-				list = Arrays.asList(temp).
-						stream().
-						filter(f -> f.contains(date)).
-						filter(this::isFileInterface).
-						map(this::getNameInterface).
-						collect(Collectors.toList());					
+				String[] array = client.listNames();
+				list = arrayToList(array, date);
 			} 
 			else
 			{
@@ -60,8 +55,8 @@ public class FtpClient
 	
 	public List<String> dirSanborns41_after(String date)
 	{
-		String userSanborns = "Soporte";
-		String passSanborns = "S0p0rt3";
+		String userSanborns = Config.getInstance().getUserSanb_bkp();
+		String passSanborns = Config.getInstance().getPassSanb_bkp();
 		List<String> list = new ArrayList<>();
 		try 
 		{
@@ -69,13 +64,8 @@ public class FtpClient
 			if(client.login(userSanborns, passSanborns))
 			{
 				client.changeWorkingDirectory("/Temporales/Temporal_Sanborns");
-				String[] temp = client.listNames();
-				list = Arrays.asList(temp).
-						stream().
-						filter(f -> f.contains(date)).
-						filter(this::isFileInterface).
-						map(this::getNameInterface).
-						collect(Collectors.toList());
+				String[] array = client.listNames();
+				list = arrayToList(array, date);
 			}
 			else
 			{
@@ -101,13 +91,8 @@ public class FtpClient
 			client.connect(server41);
 			if(client.login(userCafe, passCafe))
 			{			
-				String[] temp = client.listNames();
-				list = Arrays.asList(temp).
-						stream().
-						filter(f -> f.contains(date)).
-						filter(this::isFileInterface).
-						map(this::getNameInterface).
-						collect(Collectors.toList());
+				String[] array = client.listNames();
+				list = arrayToList(array, date);
 			} 
 			else
 			{
@@ -151,6 +136,22 @@ public class FtpClient
 		{
 			list.add("Error en ftp: " + e.getMessage());
 		}
+		return list;
+	}
+
+	private List<String> arrayToList(String[] array, String date)
+	{
+		List<String> list = new ArrayList<>();
+		list = Arrays.asList(array).
+						stream().
+						filter(f -> f.contains(date)).
+						filter(this::isFileInterface).
+						map(this::getNameInterface).
+						collect(Collectors.toList());
+		if(list.size() == 0)
+			list.add("No se encontraron interfaces");
+		else if(list.size() == 1)
+			list.set(0, "No se encontraron interfaces");
 		return list;
 	}
 
