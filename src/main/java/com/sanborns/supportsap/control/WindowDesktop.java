@@ -1,5 +1,7 @@
 package com.sanborns.supportsap.control;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,11 +16,11 @@ import javax.swing.UIManager;
 import com.sanborns.supportsap.view.InterfaceReview;
 import com.sanborns.supportsap.view.InternalOpenStore;
 import com.sanborns.supportsap.view.InternalSalesWeb;
+import com.sanborns.supportsap.view.InternalSanborns41;
 import com.sanborns.supportsap.view.InternalStartEodProc;
 
 public class WindowDesktop extends JFrame
 {
-	private static final long serialVersionUID = 1L;
 	private JDesktopPane desktopPane;
 	private JMenuBar menuBar;
 	
@@ -28,23 +30,22 @@ public class WindowDesktop extends JFrame
 	private JMenuItem jmiISalesWeb;
 	private JMenuItem jmiIOpenStore;
 	private JMenuItem jmiIEodProc;
+	private JMenuItem jmiIISanborns41;
 	
 	// VAR INTERNALFRAME NIGHT REVIEW 
 	InterfaceReview iSalesWeb;
 	InterfaceReview iOpenStore;
 	InterfaceReview iEodProc;
-	InterfaceReview iInterfaces41;	
+	InterfaceReview iInterfacesSan41;
 	
 	public WindowDesktop()
 	{
 		super("Support Aplication");
 		setLookAndFeel("Nimbus");
-		this.setSize(800, 600);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
+		setLocationJFrame();
 		initComponents();
 	}
-	
 	
 	
 	private void initComponents()
@@ -60,6 +61,8 @@ public class WindowDesktop extends JFrame
 		jmiIOpenStore.addActionListener(actionListener());
 		jmiIEodProc = new JMenuItem("Inicio de Eodproc");
 		jmiIEodProc.addActionListener(actionListener());
+		jmiIISanborns41 = new JMenuItem("Interfaces Sanborns 41");
+		jmiIISanborns41.addActionListener(actionListener());
 		
 		// INITIALIZE JMENU
 		jmSupport = new JMenu("Soporte");
@@ -67,6 +70,7 @@ public class WindowDesktop extends JFrame
 		jmReview.add(jmiISalesWeb);
 		jmReview.add(jmiIOpenStore);
 		jmReview.add(jmiIEodProc);
+		jmReview.add(jmiIISanborns41);
 		
 		// INITIALIZE MENUBAR
 		menuBar = new JMenuBar();
@@ -81,8 +85,19 @@ public class WindowDesktop extends JFrame
 		this.add(iOpenStore);
 		iEodProc = new InternalStartEodProc();
 		this.add(iEodProc);
+		iInterfacesSan41 = new InternalSanborns41();
+		this.add(iInterfacesSan41);
 	}
 	
+	private void setLocationJFrame()
+	{
+		Dimension window = Toolkit.getDefaultToolkit().getScreenSize();
+		double height = window.height / 1.2;
+		double width = window.width / 1.2;
+		setSize((int)width,(int)height);
+		setLocationRelativeTo(null);
+	}
+
 	private ActionListener actionListener()
 	{
 		return new ActionListener() 
@@ -96,6 +111,8 @@ public class WindowDesktop extends JFrame
 					iOpenStore.setVisible(true);
 				if(e.getSource() == jmiIEodProc)
 					iEodProc.setVisible(true);
+				if(e.getSource() == jmiIISanborns41)
+					iInterfacesSan41.setVisible(true);
 			}
 		};
 	}
